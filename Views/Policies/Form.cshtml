@@ -1,0 +1,21 @@
+@model Policy
+@{ ViewData["Title"] = Model.Id == 0 ? "New Policy" : "Edit Policy"; }
+<h2 class="mb-3">@ViewData["Title"]</h2>
+<form method="post" class="row g-3">
+  <input type="hidden" asp-for="Id" />
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+  <div class="col-md-4"><label asp-for="PolicyNumber" class="form-label"></label><input asp-for="PolicyNumber" class="form-control" /><span asp-validation-for="PolicyNumber" class="text-danger"></span></div>
+  <div class="col-md-4"><label asp-for="InsuranceClientId" class="form-label">Client</label><select asp-for="InsuranceClientId" asp-items="ViewBag.Clients" class="form-select"></select></div>
+  <div class="col-md-4"><label asp-for="InsuranceCompanyId" class="form-label">Company</label><select asp-for="InsuranceCompanyId" asp-items="ViewBag.Companies" class="form-select"></select></div>
+  <div class="col-md-3"><label asp-for="PolicyType" class="form-label"></label><select asp-for="PolicyType" asp-items='new SelectList(new[]{"Life","Health","Motor","Property","Travel"})' class="form-select"></select></div>
+  <div class="col-md-3"><label asp-for="SumAssured" class="form-label"></label><input asp-for="SumAssured" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="PremiumAmount" class="form-label"></label><input asp-for="PremiumAmount" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="PremiumFrequency" class="form-label"></label><select asp-for="PremiumFrequency" asp-items='new SelectList(new[]{"Monthly","Quarterly","HalfYearly","Yearly"})' class="form-select"></select></div>
+  <div class="col-md-3"><label asp-for="StartDate" class="form-label"></label><input asp-for="StartDate" type="date" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="EndDate" class="form-label"></label><input asp-for="EndDate" type="date" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="NextPremiumDue" class="form-label"></label><input asp-for="NextPremiumDue" type="date" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="CommissionPercent" class="form-label">Commission %</label><input asp-for="CommissionPercent" class="form-control" /></div>
+  <div class="col-md-3"><label asp-for="Status" class="form-label"></label><select asp-for="Status" asp-items='new SelectList(new[]{"Active","Lapsed","Expired","Claimed"})' class="form-select"></select></div>
+  <div class="col-12"><button class="btn btn-primary">Save</button> <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a></div>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

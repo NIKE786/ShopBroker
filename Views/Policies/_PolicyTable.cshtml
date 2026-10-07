@@ -1,0 +1,23 @@
+@model List<Policy>
+<table class="table table-sm table-striped">
+  <thead><tr><th>Policy #</th><th>Client</th><th>Company</th><th>Type</th><th class="text-end">Premium</th><th>Next Due</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  @foreach (var p in Model)
+  {
+    var overdue = p.Status == "Active" && p.NextPremiumDue < DateTime.Today;
+    <tr>
+      <td>@p.PolicyNumber</td>
+      <td>@p.Client?.FullName<br /><small class="text-muted">@p.Client?.Phone</small></td>
+      <td>@p.Company?.Name</td>
+      <td>@p.PolicyType</td>
+      <td class="text-end">₹@p.PremiumAmount.ToString("N2")<br /><small class="text-muted">@p.PremiumFrequency</small></td>
+      <td class="@(overdue ? "text-danger fw-bold" : "")">@p.NextPremiumDue.ToString("dd MMM yyyy")@(overdue ? " (overdue)" : "")</td>
+      <td>@p.Status</td>
+      <td class="text-end text-nowrap">
+        <a asp-controller="Policies" asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Open</a>
+      </td>
+    </tr>
+  }
+  @if (!Model.Any()) { <tr><td colspan="8" class="text-center text-muted">Koi record nahi.</td></tr> }
+  </tbody>
+</table>

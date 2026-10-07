@@ -1,0 +1,12 @@
+@model List<Policy>
+@{ ViewData["Title"] = "Policies"; }
+<div class="d-flex justify-content-between mb-3">
+  <h2>Policies</h2>
+  <a asp-action="Create" class="btn btn-primary">+ New Policy</a>
+</div>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-5"><input name="q" value="@ViewBag.Q" class="form-control" placeholder="Policy no / client name / phone" /></div>
+  <div class="col-md-3"><select name="status" class="form-select" asp-items='new SelectList(new[]{"Active","Lapsed","Expired","Claimed"}, (string?)ViewBag.Status)'><option value="">All status</option></select></div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Search</button></div>
+</form>
+<partial name="_PolicyTable" model="Model" />

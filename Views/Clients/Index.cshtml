@@ -1,0 +1,23 @@
+@model List<InsuranceClient>
+@{ ViewData["Title"] = "Clients"; }
+<div class="d-flex justify-content-between mb-3"><h2>Clients</h2><a asp-action="Create" class="btn btn-primary">+ New Client</a></div>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-6"><input name="q" value="@ViewBag.Q" class="form-control" placeholder="Name ya phone" /></div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Search</button></div>
+</form>
+<table class="table table-sm table-striped">
+  <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Policies</th><th></th></tr></thead>
+  <tbody>
+  @foreach (var c in Model)
+  {
+    <tr>
+      <td>@c.FullName</td><td>@c.Phone</td><td>@c.Email</td><td>@c.Policies.Count</td>
+      <td class="text-end text-nowrap">
+        <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Open</a>
+        <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Delete karein?');"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

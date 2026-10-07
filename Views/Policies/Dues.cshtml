@@ -1,0 +1,12 @@
+@model List<Policy>
+@{ ViewData["Title"] = "Premium Dues"; }
+<h2 class="mb-3">Premium Dues / Renewals</h2>
+<form method="get" class="mb-3">
+  <div class="btn-group">
+    @foreach (var d in new[] { 7, 15, 30, 60, 90 })
+    {
+        <a asp-action="Dues" asp-route-days="@d" class="btn btn-outline-primary @((int)ViewBag.Days == d ? "active" : "")">Agle @d din</a>
+    }
+  </div>
+</form>
+<partial name="_PolicyTable" model="Model" />

@@ -1,0 +1,32 @@
+@model CheckoutVM
+@{ ViewData["Title"] = "Checkout"; }
+<h2 class="mb-3">Checkout</h2>
+<div class="row g-4">
+  <div class="col-md-7">
+    <form asp-action="Checkout" method="post">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+      <div class="mb-3"><label asp-for="CustomerName" class="form-label"></label><input asp-for="CustomerName" class="form-control" /><span asp-validation-for="CustomerName" class="text-danger"></span></div>
+      <div class="mb-3"><label asp-for="Phone" class="form-label"></label><input asp-for="Phone" class="form-control" /><span asp-validation-for="Phone" class="text-danger"></span></div>
+      <div class="mb-3"><label asp-for="Address" class="form-label"></label><textarea asp-for="Address" rows="3" class="form-control"></textarea><span asp-validation-for="Address" class="text-danger"></span></div>
+      <div class="mb-3">
+        <label class="form-label d-block">Payment method</label>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="PaymentMethod" value="COD" id="p1" checked="@(Model.PaymentMethod == "COD")" /><label class="form-check-label" for="p1">Cash on Delivery</label></div>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="PaymentMethod" value="UPI" id="p2" checked="@(Model.PaymentMethod == "UPI")" /><label class="form-check-label" for="p2">UPI</label></div>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="PaymentMethod" value="Card" id="p3" checked="@(Model.PaymentMethod == "Card")" /><label class="form-check-label" for="p3">Card</label></div>
+      </div>
+      <button class="btn btn-success btn-lg w-100">Order Place Karein</button>
+    </form>
+  </div>
+  <div class="col-md-5">
+    <div class="card"><div class="card-header">Order Summary</div>
+      <ul class="list-group list-group-flush">
+      @foreach (var l in Model.Lines)
+      {
+          <li class="list-group-item d-flex justify-content-between"><span>@l.Name × @l.Qty</span><span>₹@l.Total.ToString("N2")</span></li>
+      }
+        <li class="list-group-item d-flex justify-content-between fw-bold"><span>Total</span><span>₹@Model.Total.ToString("N2")</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

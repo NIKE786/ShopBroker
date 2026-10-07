@@ -1,0 +1,29 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Shop";
+    var icons = new[] { "🍚", "🌾", "🛢️", "🍬", "🍵", "🧂", "🫘", "🌶️", "🍪", "🧼" };
+}
+<h2 class="mb-3">Hamare Products</h2>
+<div class="row g-3">
+@foreach (var p in Model)
+{
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+          <div class="product-emoji mb-2">@icons[(p.Id - 1) % icons.Length]</div>
+          <h6 class="card-title">@p.Name</h6>
+          <div class="fw-bold mb-1">₹@p.Price.ToString("N2")</div>
+          <div class="small mb-2 @(p.Stock > 0 ? "text-success" : "text-danger")">@(p.Stock > 0 ? $"In stock ({p.Stock})" : "Out of stock")</div>
+          @if (p.Stock > 0)
+          {
+              <form asp-action="Add" method="post" class="mt-auto d-flex gap-2">
+                  <input type="hidden" name="id" value="@p.Id" />
+                  <input type="number" name="qty" value="1" min="1" max="@Math.Min(p.Stock, 99)" class="form-control form-control-sm" style="width:70px" />
+                  <button class="btn btn-sm btn-primary flex-grow-1">Add to cart</button>
+              </form>
+          }
+        </div>
+      </div>
+    </div>
+}
+</div>

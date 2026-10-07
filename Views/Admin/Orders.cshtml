@@ -1,0 +1,26 @@
+@model List<Order>
+@{ ViewData["Title"] = "Orders"; }
+<h2 class="mb-3">Saare Orders</h2>
+<table class="table table-sm table-striped">
+  <thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Items</th><th>Payment</th><th class="text-end">Total</th><th>Status</th></tr></thead>
+  <tbody>
+  @foreach (var o in Model)
+  {
+    <tr>
+      <td>@o.Id</td>
+      <td>@o.OrderDate.ToLocalTime().ToString("dd MMM yy HH:mm")</td>
+      <td>@o.CustomerName<br /><small class="text-muted">@o.Phone</small></td>
+      <td>@string.Join(", ", o.Items.Select(i => $"{i.Product?.Name} ×{i.Quantity}"))</td>
+      <td>@o.PaymentMethod</td>
+      <td class="text-end">₹@o.TotalAmount.ToString("N2")</td>
+      <td>
+        <form asp-action="SetStatus" method="post" class="d-flex gap-1">
+          <input type="hidden" name="id" value="@o.Id" />
+          <select name="status" class="form-select form-select-sm" asp-items='new SelectList(new[]{"Placed","Awaiting Payment","Paid","Shipped","Delivered","Cancelled"}, o.Status)'></select>
+          <button class="btn btn-sm btn-outline-primary">Save</button>
+        </form>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

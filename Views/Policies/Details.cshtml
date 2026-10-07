@@ -1,0 +1,46 @@
+@model Policy
+@{ ViewData["Title"] = "Policy " + Model.PolicyNumber; }
+<div class="d-flex justify-content-between mb-3">
+  <h2>Policy @Model.PolicyNumber <span class="badge bg-secondary fs-6">@Model.Status</span></h2>
+  <div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Policy aur uske payments delete honge. Pakka?');">
+      <button class="btn btn-outline-danger">Delete</button>
+    </form>
+  </div>
+</div>
+<div class="row mb-4">
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-5">Client</dt><dd class="col-7"><a asp-controller="Clients" asp-action="Details" asp-route-id="@Model.InsuranceClientId">@Model.Client?.FullName</a> (@Model.Client?.Phone)</dd>
+      <dt class="col-5">Company</dt><dd class="col-7">@Model.Company?.Name</dd>
+      <dt class="col-5">Type</dt><dd class="col-7">@Model.PolicyType</dd>
+      <dt class="col-5">Sum Assured</dt><dd class="col-7">₹@Model.SumAssured.ToString("N2")</dd>
+    </dl>
+  </div>
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-5">Premium</dt><dd class="col-7">₹@Model.PremiumAmount.ToString("N2") (@Model.PremiumFrequency)</dd>
+      <dt class="col-5">Period</dt><dd class="col-7">@Model.StartDate.ToString("dd MMM yyyy") – @Model.EndDate.ToString("dd MMM yyyy")</dd>
+      <dt class="col-5">Next Due</dt><dd class="col-7 fw-bold">@Model.NextPremiumDue.ToString("dd MMM yyyy")</dd>
+      <dt class="col-5">Commission</dt><dd class="col-7">@Model.CommissionPercent %</dd>
+    </dl>
+  </div>
+</div>
+<h5>Premium Payment add karein</h5>
+<form asp-action="AddPayment" asp-route-id="@Model.Id" method="post" class="row g-2 mb-4">
+  <div class="col-md-3"><input name="amount" type="number" step="0.01" value="@Model.PremiumAmount" class="form-control" /></div>
+  <div class="col-md-3"><input name="paidOn" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" /></div>
+  <div class="col-md-2"><button class="btn btn-success">Save Payment</button></div>
+</form>
+<h5>Payment History</h5>
+<table class="table table-sm">
+  <thead><tr><th>Date</th><th class="text-end">Amount</th><th class="text-end">Commission</th></tr></thead>
+  <tbody>
+  @foreach (var x in Model.Payments.OrderByDescending(x => x.PaidOn))
+  {
+    <tr><td>@x.PaidOn.ToString("dd MMM yyyy")</td><td class="text-end">₹@x.Amount.ToString("N2")</td><td class="text-end">₹@x.CommissionEarned.ToString("N2")</td></tr>
+  }
+  @if (!Model.Payments.Any()) { <tr><td colspan="3" class="text-muted">Koi payment nahi.</td></tr> }
+  </tbody>
+</table>

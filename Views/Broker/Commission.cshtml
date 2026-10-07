@@ -1,0 +1,19 @@
+@model List<PremiumPayment>
+@{ ViewData["Title"] = "Commission Report"; }
+<h2 class="mb-3">Commission Report</h2>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-3"><input type="date" name="from" value="@(((DateTime)ViewBag.From).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+  <div class="col-md-3"><input type="date" name="to" value="@(((DateTime)ViewBag.To).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Show</button></div>
+</form>
+<table class="table table-sm table-striped">
+  <thead><tr><th>Date</th><th>Policy</th><th>Client</th><th>Company</th><th class="text-end">Premium</th><th class="text-end">Commission</th></tr></thead>
+  <tbody>
+  @foreach (var x in Model)
+  {
+    <tr><td>@x.PaidOn.ToString("dd MMM yyyy")</td><td>@x.Policy?.PolicyNumber</td><td>@x.Policy?.Client?.FullName</td><td>@x.Policy?.Company?.Name</td>
+        <td class="text-end">₹@x.Amount.ToString("N2")</td><td class="text-end">₹@x.CommissionEarned.ToString("N2")</td></tr>
+  }
+  </tbody>
+  <tfoot><tr><th colspan="4" class="text-end">Total</th><th class="text-end">₹@Model.Sum(x => x.Amount).ToString("N2")</th><th class="text-end">₹@Model.Sum(x => x.CommissionEarned).ToString("N2")</th></tr></tfoot>
+</table>

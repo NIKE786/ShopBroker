@@ -1,0 +1,17 @@
+@model List<Product>
+@{ ViewData["Title"] = "Products"; }
+<h2 class="mb-3">Products (Price / Stock)</h2>
+@foreach (var p in Model)
+{
+  <form asp-action="SaveProduct" method="post" class="row g-2 align-items-center border-bottom py-2">
+    <input type="hidden" name="id" value="@p.Id" />
+    <div class="col-md-4"><strong>@p.Id.</strong> @p.Name</div>
+    <div class="col-6 col-md-2"><input name="price" value="@p.Price" type="number" step="0.01" min="0.01" class="form-control form-control-sm" /></div>
+    <div class="col-6 col-md-2"><input name="stock" value="@p.Stock" type="number" min="0" class="form-control form-control-sm" /></div>
+    <div class="col-6 col-md-2">
+      <input type="checkbox" name="isActive" value="true" checked="@p.IsActive" class="form-check-input" /> Active
+      <input type="hidden" name="isActive" value="false" />
+    </div>
+    <div class="col-6 col-md-2"><button class="btn btn-sm btn-primary">Save</button></div>
+  </form>
+}

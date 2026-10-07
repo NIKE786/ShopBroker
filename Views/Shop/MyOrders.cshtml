@@ -1,0 +1,17 @@
+@model List<Order>
+@{ ViewData["Title"] = "My Orders"; }
+<h2 class="mb-3">Mere Orders</h2>
+@if (!Model.Any()) { <div class="alert alert-info">Abhi tak koi order nahi.</div> }
+@foreach (var o in Model)
+{
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between">
+        <span>Order #@o.Id &middot; @o.OrderDate.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+        <span class="badge bg-secondary">@o.Status</span>
+      </div>
+      <div class="card-body">
+        @foreach (var i in o.Items) { <div>@i.Product?.Name × @i.Quantity</div> }
+        <div class="fw-bold mt-2">Total: ₹@o.TotalAmount.ToString("N2")</div>
+      </div>
+    </div>
+}

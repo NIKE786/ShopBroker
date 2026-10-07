@@ -1,0 +1,16 @@
+@model List<InsuranceCompany>
+@{ ViewData["Title"] = "Companies"; }
+<div class="d-flex justify-content-between mb-3"><h2>Insurance Companies</h2><a asp-action="Create" class="btn btn-primary">+ New Company</a></div>
+<table class="table table-sm table-striped">
+  <thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th></th></tr></thead>
+  <tbody>
+  @foreach (var c in Model)
+  {
+    <tr><td>@c.Name</td><td>@c.ContactPerson</td><td>@c.Phone</td>
+      <td class="text-end text-nowrap">
+        <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Delete karein?');"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+      </td></tr>
+  }
+  </tbody>
+</table>

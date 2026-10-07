@@ -1,0 +1,4 @@
+.product-emoji { font-size: 4rem; text-align: center; background: #f6f7f9; border-radius: .5rem; padding: 1rem 0; }
+.table-sm td, .table-sm th { vertical-align: middle; }
+.stat { font-size: 1.8rem; font-weight: 600; }
+.navbar .btn-link.nav-link { border: 0; }
