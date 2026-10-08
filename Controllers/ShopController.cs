@@ -13,22 +13,33 @@ public class ShopController : Controller
     private readonly AppDbContext _db;
     public ShopController(AppDbContext db) => _db = db;
 
-    public async Task<IActionResult> Index() =>
-        View(await _db.Products.Where(p => p.IsActive).OrderBy(p => p.Id).ToListAsync());
+    public async Task<IActionResult> Index(string? cat, string? q)
+    {
+        var query = _db.Products.Where(p => p.IsActive);
+        if (!string.IsNullOrWhiteSpace(cat)) query = query.Where(p => p.Category == cat);
+        if (!string.IsNullOrWhiteSpace(q)) query = query.Where(p => p.Name.Contains(q));
+        ViewBag.Cat = cat; ViewBag.Q = q;
+        ViewBag.Categories = await _db.Products.Where(p => p.IsActive && p.Category != null)
+            .Select(p => p.Category!).Distinct().OrderBy(c => c).ToListAsync();
+        return View(await query.OrderBy(p => p.Category).ThenBy(p => p.Name).ToListAsync());
+    }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Add(int id, int qty = 1)
+    public async Task<IActionResult> Add(int id, int qty = 1, string? returnUrl = null)
     {
         var p = await _db.Products.FindAsync(id);
         if (p == null || !p.IsActive) return NotFound();
-        if (p.Stock <= 0) { TempData["Err"] = $"{p.Name} abhi stock mein nahi hai."; return RedirectToAction(nameof(Index)); }
+        if (p.Stock <= 0) { TempData["Err"] = $"{p.Name} abhi available nahi hai."; return BackTo(returnUrl); }
         var cart = CartHelper.Get(HttpContext.Session);
         var total = cart.GetValueOrDefault(id) + Math.Max(qty, 1);
         cart[id] = Math.Min(total, Math.Min(p.Stock, 99));
         CartHelper.Save(HttpContext.Session, cart);
         TempData["Msg"] = $"{p.Name} cart mein add ho gaya.";
-        return RedirectToAction(nameof(Index));
+        return BackTo(returnUrl);
     }
+
+    private IActionResult BackTo(string? returnUrl) =>
+        !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) ? LocalRedirect(returnUrl) : RedirectToAction(nameof(Index));
 
     public async Task<IActionResult> Cart() => View(await BuildLines());
 
@@ -54,7 +65,7 @@ public class ShopController : Controller
     {
         var lines = await BuildLines();
         if (!lines.Any()) return RedirectToAction(nameof(Index));
-        return View(new CheckoutVM { Lines = lines, CustomerName = User.Identity?.IsAuthenticated == true ? User.Identity!.Name ?? "" : "" });
+        return View(new CheckoutVM { Lines = lines });
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -63,7 +74,7 @@ public class ShopController : Controller
         var lines = await BuildLines();
         if (!lines.Any()) return RedirectToAction(nameof(Index));
         vm.Lines = lines;
-        if (!new[] { "COD", "UPI", "Card" }.Contains(vm.PaymentMethod)) vm.PaymentMethod = "COD";
+        if (!new[] { "Link", "COD" }.Contains(vm.PaymentMethod)) vm.PaymentMethod = "Link";
         if (!ModelState.IsValid) return View(vm);
 
         var ids = lines.Select(l => l.ProductId).ToList();
@@ -75,6 +86,7 @@ public class ShopController : Controller
             CustomerName = vm.CustomerName.Trim(),
             Phone = vm.Phone.Trim(),
             Address = vm.Address.Trim(),
+            Notes = vm.Notes?.Trim(),
             PaymentMethod = vm.PaymentMethod,
             Status = vm.PaymentMethod == "COD" ? "Placed" : "Awaiting Payment"
         };

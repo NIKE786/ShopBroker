@@ -20,9 +20,15 @@ public class BrokerController : Controller
         var vm = new BrokerDashboardVM
         {
             Clients = await _db.InsuranceClients.CountAsync(),
+            Companies = await _db.InsuranceCompanies.CountAsync(),
+            TotalPolicies = await _db.Policies.CountAsync(),
             ActivePolicies = await active.CountAsync(),
+            Lapsed = await _db.Policies.CountAsync(p => p.Status == "Lapsed"),
+            Expired = await _db.Policies.CountAsync(p => p.Status == "Expired"),
+            Claimed = await _db.Policies.CountAsync(p => p.Status == "Claimed"),
             DueIn30Days = await active.CountAsync(p => p.NextPremiumDue >= today && p.NextPremiumDue <= today.AddDays(30)),
             Overdue = await active.CountAsync(p => p.NextPremiumDue < today),
+            RenewedThisMonth = await _db.PremiumPayments.CountAsync(x => x.PaymentType == "Renewal" && x.PaidOn >= monthStart),
             PremiumThisMonth = await _db.PremiumPayments.Where(x => x.PaidOn >= monthStart).SumAsync(x => (decimal?)x.Amount) ?? 0,
             CommissionThisMonth = await _db.PremiumPayments.Where(x => x.PaidOn >= monthStart).SumAsync(x => (decimal?)x.CommissionEarned) ?? 0,
             CommissionTotal = await _db.PremiumPayments.SumAsync(x => (decimal?)x.CommissionEarned) ?? 0,

@@ -53,7 +53,7 @@ using (var scope = app.Services.CreateScope())
     if (!db.InsuranceCompanies.Any())
     {
         db.InsuranceCompanies.AddRange(
-            new InsuranceCompany { Name = "LIC of India" },
+            new InsuranceCompany { Name = "LIC of India India" },
             new InsuranceCompany { Name = "HDFC Life" },
             new InsuranceCompany { Name = "ICICI Prudential" },
             new InsuranceCompany { Name = "Star Health" },
